@@ -1,17 +1,11 @@
 #!/usr/bin/env python
-
 import time
 import RPi.GPIO as GPIO
 
+from ShiftOutputGPIO import ShiftOutputGPIO
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-
-S_DS = 23
-S_ST = 24
-S_SH = 25
-
-for p in (S_DS, S_ST, S_SH):
-    GPIO.setup(p, GPIO.OUT, initial=GPIO.LOW)
 
 states = [
     "11000000",
@@ -74,14 +68,12 @@ states = [
     "10000001",
 ]
 
+out = ShiftOutputGPIO()
 
 while True:
     for state in states:
-        GPIO.output(S_ST, 0)
-        for bit in state:
-            GPIO.output(S_DS, int(bit))
-            GPIO.output(S_SH, 1)
-            GPIO.output(S_SH, 0)
-        GPIO.output(S_ST, 1)
+        for idx in range(0, len(state)):
+            bit = state[idx]
+            out.output(idx, bit)
         time.sleep(0.05)
 
