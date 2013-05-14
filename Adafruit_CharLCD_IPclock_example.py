@@ -4,8 +4,10 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import * 
 from time import sleep, strftime
 from datetime import datetime
+from ShiftOutputGPIO import ShiftOutputGPIO
 
-lcd = Adafruit_CharLCD()
+shift_out = ShiftOutputGPIO()
+lcd = Adafruit_CharLCD(pin_rs=4, pin_e=5, pins_db=[0,1,2,3], GPIO=shift_out)
 
 cmd = "ip addr show eth0 | grep inet | awk '{print $2}' | cut -d/ -f1"
 

@@ -7,6 +7,13 @@
 #
 
 from time import sleep
+#!/usr/bin/env python
+import time
+import RPi.GPIO as GPIO
+from ShiftOutputGPIO import ShiftOutputGPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 class Adafruit_CharLCD:
 
@@ -254,7 +261,8 @@ class Adafruit_CharLCD:
 
 if __name__ == '__main__':
 
-    lcd = Adafruit_CharLCD()
+    shift_out = ShiftOutputGPIO()
+    lcd = Adafruit_CharLCD(pin_rs=4, pin_e=5, pins_db=[0,1,2,3], GPIO=shift_out)
 
     lcd.clear()
     lcd.message("  Adafruit 16x2\n  Standard LCD")
