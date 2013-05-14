@@ -251,10 +251,14 @@ class Adafruit_CharLCD:
 
     def message(self, text):
         """ Send string to LCD. Newline wraps to second line"""
-
+        line_codes = [0xC0, 0x94, 0xD4, 0x80]
+        
         for char in text:
             if char == '\n':
-                self.write4bits(0xC0) # next line
+                print line_codes
+                code = line_codes.pop(0)
+                line_codes.append(code)
+                self.write4bits(code)
             else:
                 self.write4bits(ord(char),True)
 
@@ -265,5 +269,4 @@ if __name__ == '__main__':
     lcd = Adafruit_CharLCD(pin_rs=4, pin_e=5, pins_db=[0,1,2,3], GPIO=shift_out)
 
     lcd.clear()
-    lcd.message("  Adafruit 16x2\n  Standard LCD")
-
+    lcd.message("  Adafruit 20x4\n  Standard LCD\n  Hello\n  World!")
