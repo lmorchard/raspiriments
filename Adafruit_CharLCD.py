@@ -255,7 +255,6 @@ class Adafruit_CharLCD:
         
         for char in text:
             if char == '\n':
-                print line_codes
                 code = line_codes.pop(0)
                 line_codes.append(code)
                 self.write4bits(code)
