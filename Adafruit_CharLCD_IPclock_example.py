@@ -5,12 +5,15 @@ from subprocess import *
 from time import sleep, strftime
 from datetime import datetime
 from ShiftOutputGPIO import ShiftOutputGPIO
+from ShiftOutputSPI import ShiftOutputSPI
 import RPi.GPIO as GPIO
 
-shift_out = ShiftOutputGPIO(num_channels=8)
+#shift_out = ShiftOutputGPIO(num_channels=16)
+shift_out = ShiftOutputSPI(num_channels=8)
 
-counters = [0, 0, 0, 0]
-counter_pins = [22, 27, 17, 4]
+counters = [0, 0, 0]
+counter_pins = [27, 17, 4]
+light_pins = [23, 24, 25]
 
 def button_callback(chan):
     try:
@@ -19,11 +22,13 @@ def button_callback(chan):
     except ValueError, e:
         pass
     
+for pin in light_pins:
+    GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+
 for pin in counter_pins:
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.add_event_detect(pin, GPIO.RISING)
     GPIO.add_event_callback(pin, button_callback)
-
 
 lcd = Adafruit_CharLCD(pin_rs=4, pin_e=5, pins_db=[0,1,2,3], GPIO=shift_out)
 
@@ -37,7 +42,7 @@ def run_cmd(cmd):
         return output
 
 while 1:
-    lcd.clear()
+    # lcd.clear()
     ipaddr = run_cmd(cmd)
     lcd.message("\n".join([
         "Hello world! :)",
@@ -45,4 +50,3 @@ while 1:
         datetime.now().strftime('%b %d  %H:%M:%S'),
         'IP %s' % ( ipaddr ),
     ]))
-    sleep(1)

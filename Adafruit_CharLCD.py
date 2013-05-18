@@ -7,7 +7,6 @@
 #
 
 from time import sleep
-#!/usr/bin/env python
 import time
 import RPi.GPIO as GPIO
 from ShiftOutputGPIO import ShiftOutputGPIO
@@ -210,27 +209,31 @@ class Adafruit_CharLCD:
     def write4bits(self, bits, char_mode=False):
         """ Send command to LCD """
 
-	self.delayMicroseconds(1000) # 1000 microsecond sleep
+	#self.delayMicroseconds(1000) # 1000 microsecond sleep
 
         bits=bin(bits)[2:].zfill(8)
 
-        self.GPIO.output(self.pin_rs, char_mode)
+        self.GPIO.output(self.pin_rs, char_mode, commit=False)
 
         for pin in self.pins_db:
-            self.GPIO.output(pin, False)
+            self.GPIO.output(pin, False, commit=False)
 
         for i in range(4):
             if bits[i] == "1":
-                self.GPIO.output(self.pins_db[::-1][i], True)
+                self.GPIO.output(self.pins_db[::-1][i], True, commit=False)
+
+	self.GPIO._commit()
 
 	self.pulseEnable()
 
         for pin in self.pins_db:
-            self.GPIO.output(pin, False)
+            self.GPIO.output(pin, False, commit=False)
 
         for i in range(4,8):
             if bits[i] == "1":
-                self.GPIO.output(self.pins_db[::-1][i-4], True)
+                self.GPIO.output(self.pins_db[::-1][i-4], True, commit=False)
+
+	self.GPIO._commit()
 
 	self.pulseEnable()
 
